@@ -6,16 +6,26 @@ parser = Cliparser.new
 
 args = parser.parse(ARGV)
 url = nil
+out = nil
 if (args['u'])
 	url = args['u']
 elsif (args['url'])
 	url = args['url']
 else
-	p 'An URL was not given.'
-	p 'Syntax: ripper.rb -u/--url <url>'
+	puts 'An URL was not given.'
+	puts 'Syntax: ripper.rb -u/--url <url> -p/--path <output path>'
 	exit
 end
 
-scraper = Scraper.new(url)
+if (args['p'])
+	out = args['p']
+elsif (args['path'])
+	out = args['path']
+else
+	puts 'An output path was not given.'
+	puts 'Syntax: ripper.rb -u/--url <url> -p/--path <output path>'
+	exit
+end
 
-scraper.scrape
+
+Ripper.new(url, out).rip
