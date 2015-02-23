@@ -21,7 +21,9 @@ class Ripper
 			cssurl = match[0]
 				.gsub(/\"/,'')
 				.gsub('href=', '')
-			@resources << Resource.new(get_absolute_path(cssurl), cssurl)
+			if (cssurl.match(/^http/) == nil)
+				@resources << Resource.new(get_absolute_path(cssurl), cssurl)
+			end
 		end
 	end
 
@@ -31,7 +33,9 @@ class Ripper
 			jsurl = match[0]
 				.gsub(/\"/,'')
 				.gsub('src=', '')
-			@resources << Resource.new(get_absolute_path(jsurl), jsurl)
+			if (jsurl.match(/^http/) == nil)
+				@resources << Resource.new(get_absolute_path(jsurl), jsurl)
+			end
 		end
 	end
 
