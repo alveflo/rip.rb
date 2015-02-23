@@ -1,7 +1,7 @@
 require 'open-uri'
 require 'uri'
 require 'fileutils'
-load 'resource.rb'
+load 'src/resource.rb'
 
 class Ripper
 	def initialize(url, destination)

@@ -1,6 +1,6 @@
 #!/usr/bin/env/ruby -w
-load 'cliparser.rb'
-load 'scraper.rb'
+load 'src/cliparser.rb'
+load 'src/ripper.rb'
 
 parser = Cliparser.new
 
@@ -13,7 +13,7 @@ elsif (args['url'])
 	url = args['url']
 else
 	puts 'An URL was not given.'
-	puts 'Syntax: ripper.rb -u/--url <url> -p/--path <output path>'
+	puts 'Syntax: rip.rb -u/--url <url> -p/--path <output path>'
 	exit
 end
 
@@ -23,7 +23,7 @@ elsif (args['path'])
 	out = args['path']
 else
 	puts 'An output path was not given.'
-	puts 'Syntax: ripper.rb -u/--url <url> -p/--path <output path>'
+	puts 'Syntax: rip.rb -u/--url <url> -p/--path <output path>'
 	exit
 end
 
