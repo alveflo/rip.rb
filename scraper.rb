@@ -45,47 +45,69 @@ class Ripper
 	end
 
 	def ensure_folder(folder)
-		dirname = folder
-		if (dirname.include?('/'))
-			dirname = File.dirname(folder)
-		end
+		begin
+			dirname = folder
+			if (dirname.include?('/'))
+				dirname = File.dirname(folder)
+			end
 
-		unless File.directory?(dirname)
-			puts "Creating folder #{dirname}"
-			FileUtils::mkdir_p(dirname)
+			unless File.directory?(dirname)
+				puts "Creating folder #{dirname}"
+				FileUtils::mkdir_p(dirname)
+			end
+		rescue
+			puts "Unable to create folder #{folder}!"
 		end
 	end
 
 	def clone_html
 		ensure_folder(@destination)
-		output = File.new("#{@destination}/index.htm", 'w')
-		open(@url) {|f|
-			f.each_line {|line|
-				l = line.strip
-				# Skiputs comments
-				if (!/^<!--/.match(l))
-					get_css_link(l)
-					get_js_link(l)
-				end
-				output.puts line
+		begin
+			output = File.new("#{@destination}/index.htm", 'w')
+			puts "Created file #{@destination}/index.htm"
+			open(@url) {|f|
+				f.each_line {|line|
+					l = line.strip
+					# Skip comments
+					if (!/^<!--/.match(l))
+						get_css_link(l)
+						get_js_link(l)
+					end
+					output.puts line
+				}
 			}
-		}
-		output.close
+		rescue SocketError
+			puts "Unable to open web #{@url}!"
+		rescue
+			puts "Unable to create file #{@destination}/index.htm!"
+		ensure
+			output.close unless output.nil?
+		end
 	end
 
 	def clone_resources
 		@resources.each{ |res| 
 			path = "#{@destination}#{res.relativeUrl}";
 			ensure_folder(path)
+			begin
+				puts "\tCreating file #{path}"
+				output = File.new(path, 'w')
 
-			puts "\tCreating file #{path}"
-			output = File.new(path, 'w')
-			open(res.absoluteUrl) {|f|
-				f.each_line {|line|
-					output.puts line
-				}
-			}
-			output.close
+				begin
+					open(res.absoluteUrl) {|f|
+						f.each_line {|line|
+							output.puts line
+						}
+					}
+				rescue SocketError
+					puts "Unable to open resource #{res.absoluteUrl}!"
+				end
+
+			rescue
+				puts "Unable to write to file #{path}!"
+			ensure
+				output.close unless output.nil?
+			end
 		}
 	end
 
